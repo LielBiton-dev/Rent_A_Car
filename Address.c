@@ -28,3 +28,13 @@ BOOL initAddress(Address* address, char* str) { //string to address
 		
 	}
 }
+
+void printAddress(Address* address) {
+	char* adStr = address->street;
+	strcat(adStr, ",");
+	strcat(adStr, address->city);
+	strcat(adStr, ",");
+	strcat(adStr, address->country);
+	printf("%s", adStr);
+	free(adStr);
+}

@@ -1,6 +1,9 @@
 #pragma once
 
 #define MAX_PLATE 20
+typedef enum { eCompact, eStandard, ePremium, eNumTypes} eType;
+static const char* Types[eNumTypes] = { "Compact", "Standard", "Premium" };
+
 typedef enum { eNoFeatures, eLuxuryInterior, eEnhancedTech, eAdvancedSafety, eNofOpt } eFeatures;
 static const char* Features[eNofOpt] = { "No Features", "Luxury Interior", "Enhanced Technology","Advanced Safety" };
 
@@ -33,7 +36,8 @@ typedef struct {
 typedef struct Vehicle_ {
 
     void (*print)(const struct Vehicle_*); // Function pointer to print vehicle
-
+    eType type;
+    char* brand;
     int vehicleSN;
     int numSeats;
     int gearBox;

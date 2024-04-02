@@ -33,7 +33,7 @@ Vehicle* addNewVehicle(Branch* branch) {
 		printf("\nWhat type of vehicle?");
 		for (int i = 0; i < eNumTypes; i++)
 			printf("\n[i]- %s", temp[i]);
-	} while (!scanf("%d", &choice1) || choice1 > 3 || choice1 < 1);
+	} while (!scanf("%d", &choice1) || choice1 >= eNumTypes || choice1 < 0);
 	newVehicle.type = (eType)choice1;
 	
 	do {
@@ -66,13 +66,16 @@ Vehicle* addNewVehicle(Branch* branch) {
 		strcpy(newVehicle.brand, PremiumBrand[choice2]);
 		break;
 	}
-	
-	strcpy(temp, Features);
-	do {
-		printf("\nAdditional features?");//need to add Features in vehicle struct
-		for (int i = 0; i < eNofOpt; i++)
-			printf("\n[i]- %s", temp[i]);
-	} while (!scanf("%d", choice3) || choice3 >= eNofOpt || choice3 < 0); 
+
+	if (newVehicle.type == ePremium){
+			strcpy(temp, Features);
+		do {
+			printf("\nAdditional features?");
+			for (int i = 0; i < eNofOpt; i++)
+				printf("\n[i]- %s", temp[i]);
+		} while (!scanf("%d", choice3) || choice3 >= eNofOpt || choice3 < 0);
+		newVehicle.category.premium.feature = (eFeatures)choice3;
+	}
 
 	
 	branch->vehicleArr = (Vehicle*)realloc(branch->vehicleArr, sizeof(Vehicle) * branch->num_vehicles);
@@ -80,6 +83,10 @@ Vehicle* addNewVehicle(Branch* branch) {
 		return NULL;
 	
 	branch->vehicleArr[branch->num_vehicles] = newVehicle;
+	for (int i = 0; i < k; i++)
+		free(temp[i]);
+	free(temp);
+	
 	return &newVehicle;
 }
 
@@ -92,3 +99,16 @@ int compareByID( const void* b1, const void* b2) {
 
 
 
+
+
+BOOL printBranch_basic(Branch* branch) {
+	if (!branch)
+		return False;
+	printf("\nBranchID: %d\tBranch Address: %s", branch->branchID, printAddress(&branch->address));
+	return True;
+}
+
+void freeBranch(Branch* branch)
+{
+	free(branch->vehicleArr);
+}

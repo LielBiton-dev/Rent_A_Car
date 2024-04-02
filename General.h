@@ -7,5 +7,5 @@
 char* getStrExactName(const char* msg);
 char* myGets(char* buffer, int size, FILE* source);
 char* getDynStr(char* str);
-
+char** splitCharsToWords(char* str, int* pCount, int* pTotalLength);
 #endif

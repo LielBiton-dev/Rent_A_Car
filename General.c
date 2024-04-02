@@ -46,3 +46,28 @@ char* myGets(char* buffer, int size, FILE* source)
 	}
 	return NULL;
 }
+char** splitCharsToWords(char* str, int* pCount, int* pTotalLength)
+{
+	char temp[255];
+	char* delimiters = ",";
+	char* word;
+	int count = 0;
+
+	strcpy(temp, str);
+	char** wordsArray = NULL;
+	*pTotalLength = 0;
+
+	word = strtok(temp, delimiters);
+	while (word != NULL)
+	{
+		wordsArray = (char**)realloc(wordsArray, (count + 1) * sizeof(char*));
+		if (!wordsArray)
+			return 0;
+		wordsArray[count] = getDynStr(word);
+		count++;
+		*pTotalLength += (int)strlen(word);
+		word = strtok(NULL, delimiters);
+	}
+	*pCount = count;
+	return wordsArray;
+}
