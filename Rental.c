@@ -5,7 +5,7 @@
 
 #include "Rental.h"
 
-int initRental(Rental* rental, Customer* customer, Vehicle* vehicle)
+int initRental(Rental* rental, Customer* customer, Vehicle* vehicle, int branchID)
 {
 	rental->rentalSN = generateRentalSN();
 	getCorrectDate(&rental->startDate);
@@ -17,6 +17,7 @@ int initRental(Rental* rental, Customer* customer, Vehicle* vehicle)
 
 	rental->customer = *customer;
 	rental->vehicle = vehicle;
+	rental->branchID = branchID;
 	rental->insurance = createInsurance();
 	rental->totalCost = calculateTotalCost(rental);
 	rental->invoice = createInvoice(rental->totalCost, rental->rentalSN);

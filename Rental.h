@@ -22,7 +22,7 @@ typedef struct {
    
 }Rental;
 
-int initRental(Rental* rental, Customer* customer, Vehicle* vehicle);
+int initRental(Rental* rental, Customer* customer, Vehicle* vehicle, int branchID);
 int checkRentDates(Date start, Date end);
 int generateRentalSN();
 int updateRental(Rental* rental); //what would you like to update? add menu
