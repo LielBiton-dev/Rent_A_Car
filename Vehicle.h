@@ -58,7 +58,7 @@ typedef struct Vehicle_ {
 
 }Vehicle;
 
-//polymorphism init functions.
+//polymorphism functions.
 void initPremium(Vehicle** vehicleArr, Vehicle* premium, int vehicleCount);
 void initStandard(Vehicle** vehicleArr, Vehicle* standard, int vehicleCount);
 void initCompact(Vehicle** vehicleArr, Vehicle* compact, int vehicleCount);
@@ -83,7 +83,7 @@ int checkUniqueSN(int SN, Vehicle** vehicleArr, int vehicleCount);
 
 int compareByOdometer(const void* v1, const void* v2);
 int compareBySN(const void* v1, const void* v2);
-int compareByCost(const void* v1, const void* v2);
 int compareByYear(const void* v1, const void* v2);
+int compareByLicensePlate(const void* v1, const void* v2); //tomer
 
 //nothing to free

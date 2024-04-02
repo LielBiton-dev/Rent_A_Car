@@ -8,9 +8,6 @@ typedef struct {
 
 	Address address;
 	int branchID;
-	//int num_vehicles;
-	float revenue;
-	//Vehicle* vehicleArr;
 }Branch;
 
 int initBranch(Branch* branch);

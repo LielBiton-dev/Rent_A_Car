@@ -174,13 +174,6 @@ int compareByOdometer(const void* v1, const void* v2)
 	return (int)(e1->odometer - e2->odometer);
 }
 
-int compareByCost(const void* v1, const void* v2)
-{
-	Vehicle* e1 = (Vehicle*)v1;
-	Vehicle* e2 = (Vehicle*)v2;
-	return (int)(e1->costPerDay, e2->costPerDay);
-}
-
 int compareByYear(const void* v1, const void* v2)
 {
 	Vehicle* e1 = (Vehicle*)v1;

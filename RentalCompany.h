@@ -20,14 +20,9 @@ typedef struct {
 
 BOOL initCompany(RentalCompany* company);
 
-BOOL Company_printVehicles_All(const RentalCompany* company);
+BOOL printVehicles_All(const RentalCompany* company);
 
-BOOL Company_printVehicles_byBranch(const RentalCompany* company, const int branchID);
-
-BOOL Company_printVehicles_byType(const RentalCompany* company, const int typeInt);
-
-BOOL Company_printVehicles_byBrand(const RentalCompany* company, const int brandInt);
-BOOL Company_printVehicles_Available(const RentalCompany* company);
+BOOL printVehicles_Available(const RentalCompany* company);
 int addVehicle(RentalCompany* company);
 void findVehicle(const RentalCompany* company);
 float Company_calculateRevenue(const RentalCompany* company);
