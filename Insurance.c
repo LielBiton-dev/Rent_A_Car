@@ -10,18 +10,18 @@ Insurance createInsurance()
 	Insurance insurance = { 0 };
 	insurance.type = getInsuranceType();
 	insurance.costPerDay = costs[insurance.type];
-	insurance.InsuranceSN = initInsuranceSN();
+	insurance.InsuranceSN = generateInsuranceSN();
 
 	return insurance;
 }
 
-int generateInsuranceSN ()
+int generateInsuranceSN () 
 {
 	static int currentSerialNumber = START_SN_INSUR; // Initial serial number
 	return currentSerialNumber++;
 }
 
-eType getInsuranceType()
+eType getInsuranceType() 
 {
 	int option;
 	do {
@@ -39,4 +39,9 @@ const char* GetTypeStr(int type)
 	if (type < 0 || type >= eNumTypes)
 		return NULL;
 	return types[type];
+}
+
+void printInsurance(const Insurance* insurance)
+{
+	printf("Insurance %s number %d\n", GetTypeStr((int)insurance->type), insurance->InsuranceSN);
 }

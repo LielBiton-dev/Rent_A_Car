@@ -5,23 +5,34 @@
 #include <time.h>
 
 #include "Customer.h"
+#include "General.h"
 #define PHONE_TAV '-'
 
 int initCustomer(Customer* customer)
 {
-    customer->ID = getCustomerID();
+    if (!getCustomerID(customer)) return 0;
     getCustomerFullName(customer);
-    getCorrectDate(&customer->birthDate);
-    getPhoneNumber(customer);
-    customer->age = calculateAge(&customer->birthDate);
+    //getCorrectDate(&customer->birthDate);
+    if (!getPhoneNumber(customer)) return 0;
+    customer->age = getAge();
+    return 1;
 }
 
-int getCustomerID()
+int getCustomerID(Customer* customer)
 {
-    int num;
-    printf("Enter your ID (numbers only)\n");
-    scanf("%d", &num);
-    return num;
+    char id[MAX_STR_LEN];
+    int ok = 1;
+    do {
+        printf("Enter your ID (numbers only)\n");
+        myGets(id, MAX_STR_LEN, stdin);
+        if (strlen(id) != ID_LEN)
+        {
+            printf("ID should be 9 numbers. Try again.\n");
+            ok = 0;
+        }
+    } while (!ok);
+    strcpy(customer->ID, id);
+    return 1;
 }
 
 int getPhoneNumber(Customer* customer)
@@ -40,6 +51,7 @@ int getPhoneNumber(Customer* customer)
     } while (!ok);
 
     strcpy(customer->phone, phone);
+    return 1;
 }
 
 int getCustomerFullName(Customer* customer)
@@ -49,17 +61,26 @@ int getCustomerFullName(Customer* customer)
     return 1;
 }
 
-int calculateAge(Date* birthDate)
+int getAge()
 {
-    time_t currentTime;
-    struct tm* localTime;
-
-    // Get current time
-    time(&currentTime);
-    localTime = localtime(&currentTime);
-
-    int currentYear = localTime->tm_year + 1900;
-    int age = currentYear - birthDate->year;
-
+    int age;
+    do {
+        printf("Enter your age\n");
+        scanf("%d", &age);
+        if (age < MIN_AGE)
+            printf("Not above minimum age for rental.\n");
+    } while (age < MIN_AGE);
     return age;
+}
+
+void printCustomer(const Customer* customer)
+{
+    printf("Customer %s %s:\nID %s\tAge %d\tphone %s\n", 
+        customer->firstName, customer->lastName, customer->ID, customer->age, customer->phone);
+}
+
+void freeCustomer(Customer* customer)
+{
+    free(customer->firstName);
+    free(customer->lastName);
 }

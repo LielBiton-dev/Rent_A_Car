@@ -1,20 +1,21 @@
 #pragma once
-#include "Date.h"
-#include "General.h"
-#define PHONE_LEN 20
+
+#define PHONE_LEN 10
+#define ID_LEN 9
+#define MIN_AGE 21
+
 typedef struct {
-    int ID;
+    char ID[ID_LEN];
     char* firstName;
     char* lastName;
     char phone[PHONE_LEN];
-    Date birthDate;
     int age;
 }Customer;
 
 int initCustomer(Customer* customer);
-int getCustomerID();
+int getCustomerID(Customer* customer);
 int getPhoneNumber(Customer* customer);
 int getCustomerFullName(Customer* customer);
-int calculateAge(Date* birthDate);
+int getAge();
 void printCustomer(const Customer* customer);
 void freeCustomer(Customer* customer);

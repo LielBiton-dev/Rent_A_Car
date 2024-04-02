@@ -22,7 +22,7 @@ Invoice createInvoice(float amount, int rentalSerial)
 	return newInvoice;
 }
 
-void printInvoice(Invoice* invoice)
+void printInvoice(const Invoice* invoice)
 {
 	printf("Invoice Serial Number: %d\nRental Serial Number: %d\nTotal Amount: %f\nIssue Date: ", 
 		invoice->invoiceSN, invoice->rentalSN, invoice->totalAmount);

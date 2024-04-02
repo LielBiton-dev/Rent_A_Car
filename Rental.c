@@ -12,7 +12,7 @@ int initRental(Rental* rental, Customer* customer, Vehicle* vehicle)
 	int ok = 0;
 	do {
 		getCorrectDate(&rental->endDate);
-		ok = checkDates(rental->startDate, rental->endDate);
+		ok = checkRentDates(rental->startDate, rental->endDate);
 	} while (!ok);
 
 	rental->customer = *customer;
@@ -20,7 +20,7 @@ int initRental(Rental* rental, Customer* customer, Vehicle* vehicle)
 	rental->insurance = createInsurance();
 	rental->totalCost = calculateTotalCost(rental);
 	rental->invoice = createInvoice(rental->totalCost, rental->rentalSN);
-
+	return 1;
 }
 
 int checkRentDates(Date start, Date end)
@@ -50,28 +50,31 @@ float calculateTotalCost(Rental* rental)
 	return num;
 }
 
-int calculateDaysOfRental(Date start, Date end)
-{
-	int totalDays = 0;
-	totalDays += (DAYS_IN_YEAR * (end.year - start.year));
-	if (end.month < start.month)
-	{
-		for (int i = start.month-1; i < MAX_MONTHS; i++)
-			totalDays += (DAY_MONTHS[i]);
-		for (int i = 0; i < end.month - 1; i++)
-			totalDays += (DAY_MONTHS[i]);
-	}
-	else
-	{
-		for (int i = start.month - 1; i < end.month - 1; i++)
-			totalDays += (DAY_MONTHS[i]);
-	}
-	totalDays = totalDays - start.day + end.day;
-}
-
 int endRental(Rental* rental)
 {
 	rental->vehicle->isTaken = 0;
 	updateOdometer(rental->vehicle, calculateDaysOfRental(rental->startDate, rental->endDate), AVG_KM);
 	printInvoice(&rental->invoice);
+	return 1;
+}
+
+void printRental(const Rental* rental)
+{
+	printf("Rental serial number: %d\n", rental->rentalSN);
+	printCustomer(&rental->customer);
+	printf("Rent vehicle: ");
+	rental->vehicle->print;
+	printf("From ");
+	printDate(&rental->startDate);
+	printf("to ");
+	printDate(&rental->endDate);
+	printInsurance(&rental->insurance);
+	printInvoice(&rental->invoice);
+}
+
+void freeRental(Rental* rental)
+{
+	//freeVehicle
+	free(rental->vehicle);
+	freeCustomer(&rental->customer);
 }
