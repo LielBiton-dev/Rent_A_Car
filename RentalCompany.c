@@ -42,13 +42,13 @@ int addBranch(RentalCompany* company) {
 int addVehicle(RentalCompany* company) {
 	int choice = 0;
 
-	Vehicle* pVehicle = (Vehicle*)calloc(1, sizeof(Vehicle));
+	Vehicle* pVehicle = (Vehicle*)malloc(sizeof(Vehicle));
 	if (!pVehicle) return 0;
 
 	do {
 		printf("Please choose vehicle category to add\n");
 		for (int i = 0; i < eNofCats; i++)
-			printf("\n[%d] for %s", i + 1, Categories[i]);
+			printf("\n[%d] for %s\n", i + 1, Categories[i]);
 		scanf("%d", &choice);
 	} while (choice<=0 || choice>eNofCats);
 
@@ -126,10 +126,10 @@ void printAvailableVehicles(const RentalCompany* company, Rental* rental) // Pri
 		if (company->vehicleArr[i]->isTaken == 1)
 		{
 			if (isVehicleAvailableInDates(company, company->vehicleArr[i], &rental->startDate, &rental->endDate))
-				company->vehicleArr[i]->print;
+				company->vehicleArr[i]->print(company->vehicleArr[i]);
 		}
 		else
-			company->vehicleArr[i]->print;
+			company->vehicleArr[i]->print(company->vehicleArr[i]);
 	}
 }
 
@@ -137,7 +137,7 @@ void printAllVehicles(const RentalCompany* company)
 {
 	for (int i = 0; i < company->numVehicles; i++)
 	{
-		company->vehicleArr[i]->print;
+		company->vehicleArr[i]->print(company->vehicleArr[i]);
 	}
 }
 
