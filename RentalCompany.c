@@ -77,6 +77,16 @@ int addVehicle(RentalCompany* company) {
 	return 1;
 }
 
+int addCustomer(RentalCompany* company)
+{
+	company->customerArr = (Customer*)realloc(company->customerArr, (company->numCustomers + 1) * sizeof(Customer));
+	if (!company->customerArr)
+		return 0;
+	initCustomer(&company->customerArr[company->numCustomers]);
+	company->numCustomers++;
+	return 1;
+}
+
 Vehicle* findVehicleBySN(Vehicle** vehicleArr, int numVehicles, int SN)
 {
 	for (int i = 0; i < numVehicles; i++)
@@ -287,4 +297,14 @@ void printAllRentals(const RentalCompany* company)
 void printAllBranches(const RentalCompany* company)
 {
 	//ADD
+}
+
+void freeCompany(RentalCompany* company)
+{
+	free(company->companyName);
+	//L_free(&company->branch_list, freeBranch);
+	//freeVehicleArray(company->vehicleArr, company->numVehicles);
+	//free(company->vehicleArr);
+	free(company->customerArr);
+	free(company->rentalArr);
 }
