@@ -10,7 +10,8 @@ typedef struct {
 }Invoice;
 
 int generateInvoiceSN();
-Invoice createInvoice(float amount, int rentalSerial);
+Invoice* createInvoice(float amount, int rentalSerial);
 void printInvoice(const Invoice* invoice);
+void updateInvoice(Invoice* invoice, float updateCost);
 
 //nothing to free

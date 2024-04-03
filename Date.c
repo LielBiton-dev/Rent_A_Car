@@ -65,6 +65,20 @@ int calculateDaysOfRental(Date start, Date end)
     return 1;
 }
 
+int dateRangesDoNotCollide(Date* start1, Date* end1, Date* start2, Date* end2) // Return 0 if there is a collision.
+{
+    if (end1->year < start2->year ||
+        (end1->year == start2->year && end1->month < start2->month) ||
+        (end1->year == start2->year && end1->month == start2->month && end1->day < start2->day) ||
+        start1->year > end2->year ||
+        (start1->year == end2->year && start1->month > end2->month) ||
+        (start1->year == end2->year && start1->month == end2->month && start1->day > end2->day)) {
+        return 1; // No collision
+    }
+    else
+        return 0; // Collision
+}
+
 void printDate(const Date* date) {
     printf(" Date: %d/%d/%d ", date->day, date->month, date->year);
 }

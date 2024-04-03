@@ -10,6 +10,7 @@ void initPremium(Vehicle** vehicleArr, Vehicle* premium, int vehicleCount)
 {
 	initVehicle(vehicleArr, premium, vehicleCount);
 	premium->print = printPremium;
+	premium->costPerDay = DAY_PRICE * PREM_multiplier;
 	premium->category.premium.isElectric = getYesNoAnswer("Enter 1 for electric vehicle.\nEnter 0 if other.\n");
 	premium->category.premium.feature = getPremiumFeature();
 	premium->category.premium.brand = getVehicleBrand(PremiumBrand, eNumPremiumBrands);
@@ -19,6 +20,7 @@ void initStandard(Vehicle** vehicleArr, Vehicle* standard, int vehicleCount)
 {
 	initVehicle(vehicleArr, standard, vehicleCount);
 	standard->print = printStandard;
+	standard->costPerDay = DAY_PRICE * STAN_multiplier;
 	standard->category.standard.cargoCapacity = getDoubleNum("Enter cargo capacity: ");
 	standard->category.standard.brand = getVehicleBrand(StandardBrand, eNumStandardBrands);
 }
@@ -27,6 +29,7 @@ void initCompact(Vehicle** vehicleArr, Vehicle* compact, int vehicleCount)
 {
 	initVehicle(vehicleArr, compact, vehicleCount);
 	compact->print = printCompact;
+	compact->costPerDay = DAY_PRICE * COMP_multiplier;
 	compact->category.compact.fuelEfficiency = getDoubleNum("Enter the fuel efficiency: ");
 	compact->category.compact.brand = getVehicleBrand(CompactBrand, eNumCompactBrands);
 }
@@ -70,17 +73,6 @@ int getVehicleBrand(char** arrName, int numOfOpt)
 	return option;
 }
 
-double getDoubleNum(const char* msg)
-{
-	double num;
-	do {
-		printf("%s\t", msg);
-		scanf("%lf", &num);
-	} while (num <= 0);
-	printf("\n");
-	return num;
-}
-
 void getLicensePlate(Vehicle* vehicle)
 {
 	char plate[MAX_STR_LEN];
@@ -97,17 +89,6 @@ void getLicensePlate(Vehicle* vehicle)
 	} while (!ok);
 
 	strcpy(vehicle->licensePlate, plate);
-}
-
-int getYesNoAnswer(const char* msg)
-{
-	int num;
-	do {
-		printf("%s\t", msg);
-		scanf("%d", &num);
-	} while (num != 0 && num != 1);
-	printf("\n");
-	return num;
 }
 
 int getNumSeats()
@@ -186,6 +167,11 @@ int compareBySN(const void* v1, const void* v2)
 	Vehicle* e1 = (Vehicle*)v1;
 	Vehicle* e2 = (Vehicle*)v2;
 	return e1->vehicleSN - e2->vehicleSN;
+}
+
+int compareByLicensePlate(const void* v1, const void* v2)
+{
+	return 0;
 }
 
 void printVehicle(const Vehicle* vehicle)

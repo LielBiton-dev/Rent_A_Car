@@ -25,7 +25,7 @@ typedef struct {
 int initRental(Rental* rental, Customer* customer, Vehicle* vehicle, int branchID);
 int checkRentDates(Date start, Date end);
 int generateRentalSN();
-int updateRental(Rental* rental); //what would you like to update? add menu
+int compareRentalByVehicleSN(const void* v1, const void* v2); // Not sure it is needed.
 float calculateTotalCost(Rental* rental);
 int calculateDaysOfRental(Date start, Date end);
 int endRental(Rental* rental);

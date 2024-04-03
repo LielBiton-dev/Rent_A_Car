@@ -18,9 +18,9 @@ int initRental(Rental* rental, Customer* customer, Vehicle* vehicle, int branchI
 	rental->customer = *customer;
 	rental->vehicle = vehicle;
 	rental->branchID = branchID;
-	rental->insurance = createInsurance();
+	rental->insurance = *(createInsurance());
 	rental->totalCost = calculateTotalCost(rental);
-	rental->invoice = createInvoice(rental->totalCost, rental->rentalSN);
+	rental->invoice = *(createInvoice(rental->totalCost, rental->rentalSN));
 	return 1;
 }
 
@@ -35,13 +35,18 @@ int checkRentDates(Date start, Date end)
 	return 1;
 }
 
+int compareRentalByVehicleSN(const void* v1, const void* v2)
+{
+	Rental* e1 = (Rental*)v1;
+	Rental* e2 = (Rental*)v2;
+	return e1->vehicle->vehicleSN - e1->vehicle->vehicleSN;
+}
+
 int generateRentalSN()
 {
 	static int currentSerialNumber = START_SN_RENT; // Initial serial number
 	return currentSerialNumber++;
 }
-
-int updateRental(Rental* rental); //what would you like to update? add menu - needs to be in RentalCompany
 
 float calculateTotalCost(Rental* rental)
 {

@@ -5,12 +5,12 @@
 
 #include "Insurance.h"
 
-Insurance createInsurance()
+Insurance* createInsurance()
 {
-	Insurance insurance = { 0 };
-	insurance.type = getInsuranceType();
-	insurance.costPerDay = costs[insurance.type];
-	insurance.InsuranceSN = generateInsuranceSN();
+	Insurance* insurance = (Insurance*)malloc(sizeof(Insurance));
+	insurance->type = getInsuranceType();
+	insurance->costPerDay = costs[insurance->type];
+	insurance->InsuranceSN = generateInsuranceSN();
 
 	return insurance;
 }

@@ -11,15 +11,22 @@ int generateInvoiceSN()
 	return currentSerialNumber++;
 }
 
-Invoice createInvoice(float amount, int rentalSerial)
+Invoice* createInvoice(float amount, int rentalSerial)
 {
-	Invoice newInvoice = { 0 };
-	newInvoice.invoiceSN = generateInvoiceSN();
-	newInvoice.totalAmount = amount;
-	newInvoice.rentalSN = rentalSerial;
-	getCorrectDate(&newInvoice.issueDate);
+	Invoice* newInvoice = (Invoice*)malloc(sizeof(Invoice));
+	if (!newInvoice) 
+		return NULL;
+	newInvoice->invoiceSN = generateInvoiceSN();
+	newInvoice->totalAmount = amount;
+	newInvoice->rentalSN = rentalSerial;
+	getCorrectDate(&newInvoice->issueDate);
 
 	return newInvoice;
+}
+
+void updateInvoice(Invoice* invoice, float updateCost)
+{
+	invoice->totalAmount = updateCost;
 }
 
 void printInvoice(const Invoice* invoice)

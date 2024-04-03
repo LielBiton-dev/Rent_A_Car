@@ -46,3 +46,36 @@ char* myGets(char* buffer, int size, FILE* source)
 	}
 	return NULL;
 }
+
+double getDoubleNum(const char* msg)
+{
+	double num;
+	do {
+		printf("%s\t", msg);
+		scanf("%lf", &num);
+	} while (num <= 0);
+	printf("\n");
+	return num;
+}
+
+int getIntegerNum(const char* msg)
+{
+	int num;
+	do {
+		printf("%s\t", msg);
+		scanf("%d", &num);
+	} while (num <= 0);
+	printf("\n");
+	return num;
+}
+
+int getYesNoAnswer(const char* msg)
+{
+	int num;
+	do {
+		printf("%s\t", msg);
+		scanf("%d", &num);
+	} while (num != 0 && num != 1);
+	printf("\n");
+	return num;
+}

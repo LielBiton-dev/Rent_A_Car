@@ -17,5 +17,6 @@ int getCustomerID(Customer* customer);
 int getPhoneNumber(Customer* customer);
 int getCustomerFullName(Customer* customer);
 int getAge();
+int checkID(const char* ID);
 void printCustomer(const Customer* customer);
 void freeCustomer(Customer* customer);

@@ -10,7 +10,7 @@ typedef struct {
     int costPerDay;
 }Insurance;
 
-Insurance createInsurance();
+Insurance* createInsurance();
 int generateInsuranceSN();
 eType getInsuranceType();
 const char* GetTypeStr(int type);

@@ -3,6 +3,11 @@
 #define MAX_PLATE 20
 #define MIN_MAN_YEAR 1950
 #define SEATS_OPT 4
+#define DAY_PRICE 20
+#define PREM_multiplier 3
+#define STAN_multiplier 2
+#define COMP_multiplier 1
+
 static const int Seats[SEATS_OPT] = { 2,3,4,5 };
 
 typedef enum { ePremium, eStandard, eCompact, eNofCats} eCategory;
@@ -39,7 +44,7 @@ typedef struct {
 typedef struct Vehicle_ {
 
     void (*print)(const struct Vehicle_*); // Function pointer to print vehicle
-    
+
     int vehicleSN;
     int numSeats;
     int gearBox;
@@ -56,6 +61,7 @@ typedef struct Vehicle_ {
         Compact compact;
     }category;
 
+
 }Vehicle;
 
 //polymorphism functions.
@@ -69,8 +75,6 @@ void printStandard(const Vehicle* standard);
 void printCompact(const Vehicle* compact);
 
 void getLicensePlate(Vehicle* vehicle);
-double getDoubleNum(const char* msg);
-int getYesNoAnswer(const char* msg);
 int getNumSeats();
 int getvehicleYear(int minYear);
 int getVehicleSN(Vehicle** vehicleArr, int vehicleCount);
@@ -84,6 +88,6 @@ int checkUniqueSN(int SN, Vehicle** vehicleArr, int vehicleCount);
 int compareByOdometer(const void* v1, const void* v2);
 int compareBySN(const void* v1, const void* v2);
 int compareByYear(const void* v1, const void* v2);
-int compareByLicensePlate(const void* v1, const void* v2); //tomer
+int compareByLicensePlate(const void* v1, const void* v2);
 
 //nothing to free

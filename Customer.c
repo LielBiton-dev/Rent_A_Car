@@ -12,9 +12,17 @@ int initCustomer(Customer* customer)
 {
     if (!getCustomerID(customer)) return 0;
     getCustomerFullName(customer);
-    //getCorrectDate(&customer->birthDate);
     if (!getPhoneNumber(customer)) return 0;
     customer->age = getAge();
+    return 1;
+}
+
+int checkID(const char* ID)
+{
+    for (int i = 0; i < ID_LEN; i++) {
+        if (!isdigit(ID[i]))
+            return 0; // Not all characters are digits
+    }
     return 1;
 }
 
@@ -28,6 +36,11 @@ int getCustomerID(Customer* customer)
         if (strlen(id) != ID_LEN)
         {
             printf("ID should be 9 numbers. Try again.\n");
+            ok = 0;
+        }
+        if (!checkID(id))
+        {
+            printf("ID should contain numbers only. Try again.\n");
             ok = 0;
         }
     } while (!ok);
