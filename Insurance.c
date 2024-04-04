@@ -5,12 +5,12 @@
 
 #include "Insurance.h"
 
-Insurance createInsurance()
+Insurance* createInsurance()
 {
-	Insurance insurance = { 0 };
-	insurance.type = getInsuranceType();
-	insurance.costPerDay = costs[insurance.type];
-	insurance.InsuranceSN = initInsuranceSN();
+	Insurance* insurance = (Insurance*)malloc(sizeof(Insurance));
+	insurance->type = getInsuranceType();
+	insurance->costPerDay = costs[insurance->type];
+	insurance->InsuranceSN = generateInsuranceSN();
 
 	return insurance;
 }
@@ -39,4 +39,9 @@ const char* GetTypeStr(int type)
 	if (type < 0 || type >= eNumTypes)
 		return NULL;
 	return types[type];
+}
+
+void printInsurance(const Insurance* insurance)
+{
+	printf("Insurance %s number %d\n", GetTypeStr((int)insurance->type), insurance->InsuranceSN);
 }

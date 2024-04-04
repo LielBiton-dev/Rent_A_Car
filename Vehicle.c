@@ -4,10 +4,136 @@
 #include <ctype.h>
 
 #include "Vehicle.h"
+#include "General.h"
+
+void initPremium(Vehicle** vehicleArr, Vehicle* premium, int vehicleCount)
+{
+	initVehicle(vehicleArr, premium, vehicleCount);
+	premium->print = printPremium;
+	premium->category.premium.isElectric = getYesNoAnswer("Enter 1 for electric vehicle.\nEnter 0 if other.\n");
+	premium->category.premium.feature = getPremiumFeature();
+	premium->category.premium.brand = getVehicleBrand(PremiumBrand, eNumPremiumBrands);
+}
+
+void initStandard(Vehicle** vehicleArr, Vehicle* standard, int vehicleCount)
+{
+	initVehicle(vehicleArr, standard, vehicleCount);
+	standard->print = printStandard;
+	standard->category.standard.cargoCapacity = getDoubleNum("Enter cargo capacity: ");
+	standard->category.standard.brand = getVehicleBrand(StandardBrand, eNumStandardBrands);
+}
+
+void initCompact(Vehicle** vehicleArr, Vehicle* compact, int vehicleCount)
+{
+	initVehicle(vehicleArr, compact, vehicleCount);
+	compact->print = printCompact;
+	compact->category.compact.fuelEfficiency = getDoubleNum("Enter the fuel efficiency: ");
+	compact->category.compact.brand = getVehicleBrand(CompactBrand, eNumCompactBrands);
+}
+
+void initVehicle(Vehicle** vehicleArr, Vehicle* vehicle, int vehicleCount)
+{
+	vehicle->vehicleSN = getVehicleSN(vehicleArr, vehicleCount);
+	vehicle->year = getvehicleYear(MIN_MAN_YEAR);
+	vehicle->numSeats = getNumSeats();
+	vehicle->gearBox = getYesNoAnswer("Enter 1 for automatic transmission.\nEnter 0 for manual transmission.\n");
+	vehicle->isTaken = 0;
+	vehicle->odometer = 0;
+	getLicensePlate(vehicle);
+}
+
+eFeatures getPremiumFeature()
+{
+	int option;
+	printf("\n\n");
+	do {
+		printf("Please choose one of the following features\n");
+		for (int i = 0; i < eNofOpt; i++)
+			printf("%d for %s\n", i, Features[i]);
+		
+	} while (!scanf("%d", &option) || option < 0 || option >= eNofOpt);
+	getchar();
+	return (eFeatures)option;
+}
+
+int getVehicleBrand(char** arrName, int numOfOpt)
+{
+	int option;
+	printf("\n\n");
+	do {
+		printf("Please choose one of the following brands\n");
+		for (int i = 0; i < numOfOpt; i++)
+			printf("%d for %s\n", i, arrName[i]);
+		
+	} while (!scanf("%d", &option) || option < 0 || option >= numOfOpt);
+	getchar();
+	return option;
+}
+
+
+void getLicensePlate(Vehicle* vehicle)
+{
+	char plate[MAX_STR_LEN];
+	int ok = 1;
+
+	do {
+		printf("Enter License Plate\t");
+		myGets(plate, MAX_STR_LEN, stdin);
+		if (strlen(plate) > MAX_PLATE)
+		{
+			printf("License plate should be maximum %d chars\n", MAX_PLATE);
+			ok = 0;
+		}
+	} while (!ok);
+
+	strcpy(vehicle->licensePlate, plate);
+}
+
+int getNumSeats()
+{
+	int num;
+	do {
+		for (int i = 0; i < SEATS_OPT; i++)
+			printf("Enter %d for %d seats\n", i, Seats[i]);
+		
+	} while (!scanf("%d", &num) || num < 0 || num>=SEATS_OPT);
+	return num;
+}
+
+int getvehicleYear(int minYear)
+{
+	int num;
+	do {
+		printf("Enter vehicle year of manufacture\n");
+		scanf("%d", &num);
+		if (num < minYear)
+			printf("The year is under the minimum. Try again.\n");
+	} while (num < minYear);
+	return num;
+}
+
+int getVehicleSN(Vehicle** vehicleArr, int vehicleCount)
+{
+	int num;
+	int unique = 0;
+	do {
+		printf("Enter vehicle serial number\n");
+		scanf("%d", &num);
+		unique = checkUniqueSN(num, vehicleArr, vehicleCount);
+	} while (!unique);
+	return num;
+}
 
 void updateOdometer(Vehicle* vehicle, int totalDays, int kmPerDay)
 {
 	vehicle->odometer += (totalDays * kmPerDay);
+}
+
+int rentVehicle(Vehicle* vehicle)
+{
+	//add extra check about dates?
+	vehicle->isTaken = 1;
+	return 1;
 }
 
 int checkUniqueSN(int SN, Vehicle** vehicleArr, int vehicleCount)
@@ -24,14 +150,7 @@ int compareByOdometer(const void* v1, const void* v2)
 {
 	Vehicle* e1 = (Vehicle*)v1;
 	Vehicle* e2 = (Vehicle*)v2;
-	return e1->odometer - e2->odometer;
-}
-
-int compareByCost(const void* v1, const void* v2)
-{
-	Vehicle* e1 = (Vehicle*)v1;
-	Vehicle* e2 = (Vehicle*)v2;
-	return e1->costPerDay, e2->costPerDay;
+	return (int)(e1->odometer - e2->odometer);
 }
 
 int compareByYear(const void* v1, const void* v2)
@@ -39,6 +158,18 @@ int compareByYear(const void* v1, const void* v2)
 	Vehicle* e1 = (Vehicle*)v1;
 	Vehicle* e2 = (Vehicle*)v2;
 	return e1->year - e2->year;
+}
+
+int compareByLicensePlate(const void* v1, const void* v2)
+{
+	Vehicle* veh1 = (Vehicle*)v1;
+	Vehicle* veh2 = (Vehicle*)v2;
+
+	return strcmp(veh1->licensePlate, veh2->licensePlate);
+	/*
+	if Return value < 0 then it indicates v1 is less than v2.
+	if Return value > 0 then it indicates v2 is less than v1.
+	if Return value = 0 then it indicates v1 is equal to v2.*/
 }
 
 int compareBySN(const void* v1, const void* v2)
@@ -60,8 +191,8 @@ void printPremium(const Vehicle* premium)
 	printVehicle(premium);
 	printf("Premium vehicle brand: %s\n", PremiumBrand[premium->category.premium.brand]);
 	printf("Feature: %s\n", Features[premium->category.premium.feature]);
-
-	//add is electric
+	if (premium->category.premium.isElectric)
+		printf("Vehicle is electric.\n");
 }
 void printStandard(const Vehicle* standard)
 {
@@ -69,7 +200,6 @@ void printStandard(const Vehicle* standard)
 	printf("Standard vehicle brand: %s\n", StandardBrand[standard->category.standard.brand]);
 	printf("With %e cargo capacity\n", standard->category.standard.cargoCapacity);
 
-	//add baby chair
 }
 void printCompact(const Vehicle* compact)
 {

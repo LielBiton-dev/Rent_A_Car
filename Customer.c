@@ -63,3 +63,15 @@ int calculateAge(Date* birthDate)
 
     return age;
 }
+
+void printCustomer(const Customer* customer)
+{
+    printf("Customer %s %s:\nID %s\tAge %d\tphone %s\n",
+        customer->firstName, customer->lastName, customer->ID, customer->age, customer->phone);
+}
+
+void freeCustomer(Customer* customer)
+{
+    free(customer->firstName);
+    free(customer->lastName);
+}

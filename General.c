@@ -71,3 +71,43 @@ char** splitCharsToWords(char* str, int* pCount, int* pTotalLength)
 	*pCount = count;
 	return wordsArray;
 }
+
+void generalArrayFunction(void* arr, int size, size_t typeSize, void(*f)(void*))
+{
+	for (int i = 0; i < size; i++)
+	{
+		f((char*)arr + i * typeSize);
+	}
+}
+double getDoubleNum(const char* msg)
+{
+	double num;
+	do {
+		printf("%s\t", msg);
+		scanf("%lf", &num);
+	} while (num <= 0);
+	printf("\n");
+	return num;
+}
+
+int getIntegerNum(const char* msg)
+{
+	int num;
+	do {
+		printf("%s\t", msg);
+		scanf("%d", &num);
+	} while (num <= 0);
+	printf("\n");
+	return num;
+}
+
+int getYesNoAnswer(const char* msg)
+{
+	int num;
+	do {
+		printf("%s\t", msg);
+		scanf("%d", &num);
+	} while (num != 0 && num != 1);
+	printf("\n");
+	return num;
+}
