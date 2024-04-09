@@ -60,7 +60,7 @@ double getDoubleNum(const char* msg)
 	double num;
 	do {
 		printf("%s\n", msg);
-		scanf("%lf", &num);
+		while (!scanf("%lf", &num));
 	} while (num <= 0);
 	printf("\n");
 	return num;
@@ -71,7 +71,7 @@ int getIntegerNum(const char* msg)
 	int num;
 	do {
 		printf("%s\n", msg);
-		scanf("%d", &num);
+		while (!scanf("%d", &num));
 	} while (num <= 0);
 	printf("\n");
 	return num;
@@ -82,7 +82,7 @@ int getYesNoAnswer(const char* msg)
 	int num;
 	do {
 		printf("%s\n", msg);
-		scanf("%d", &num);
+		while (!scanf("%d", &num));
 	} while (num != 0 && num != 1);
 	printf("\n");
 	return num;
