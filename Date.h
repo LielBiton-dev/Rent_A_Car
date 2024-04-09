@@ -14,9 +14,8 @@ typedef struct {
 
 int getCorrectDate(Date* date);
 int	 checkDate(char* date, Date* pDate);
-int calculateDaysOfRental(Date start, Date end);
+int calculateDaysOfRental(const Date start,const Date end);
 void printDate(const Date* date);
-int dateRangesDoNotCollide(Date* start1, Date* end1, Date* start2, Date* end2); // The function checks if the period start1-end1 collides with the period start2-end2.
-int writeDateToBFile(FILE* fp, Date* pDate);
+int dateRangesDoNotCollide(const Date* start1, const Date* end1, const Date* start2, const Date* end2); // The function checks if the period start1-end1 collides with the period start2-end2.
 
 //nothing to free

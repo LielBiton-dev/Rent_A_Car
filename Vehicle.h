@@ -1,20 +1,20 @@
 #pragma once
 
-#define MAX_PLATE 20
-#define MIN_MAN_YEAR 1950
-#define SEATS_OPT 4
+#define MAX_PLATE 10
+#define MIN_MAN_YEAR 2018
+#define MAX_MAN_YEAR 2024
 #define DAY_PRICE 20
 #define PREM_multiplier 3
 #define STAN_multiplier 2
 #define COMP_multiplier 1
-
-static const int Seats[SEATS_OPT] = { 2,3,4,5 };
+#define MIN_SEATS 2
+#define MAX_SEATS 10
 
 typedef enum { ePremium, eStandard, eCompact, eNofCats} eCategory;
 static char* Categories[eNofCats] = { "Premium", "Standard", "Compact" };
 
-typedef enum { eNoFeatures, eLuxuryInterior, eEnhancedTech, eAdvancedSafety, eNofOpt } eFeatures;
-static char* Features[eNofOpt] = { "No Features", "Luxury Interior", "Enhanced Technology","Advanced Safety" };
+typedef enum { eNoFeatures, eLuxuryInterior, eEnhancedTech, eAdvancedSafety,eAll, eNofOpt } eFeatures;
+static char* Features[eNofOpt] = { "No Features", "Luxury Interior", "Enhanced Technology","Advanced Safety", "All Features" };
 
 typedef enum { eMercedesBenz, eAudi, eLexus, eNumPremiumBrands } ePremiumBrand;
 static char* PremiumBrand[eNumPremiumBrands] = { "Mercedes Benz", "Audi", "Lexus"};
@@ -51,8 +51,9 @@ typedef struct Vehicle_ {
     int isTaken;
     int year;
     double odometer;
-    char licensePlate[MAX_PLATE];
+    char licensePlate[MAX_PLATE + 1];
     int costPerDay;
+    eCategory categoryType;
 
     // Union to hold different categories
     union {
@@ -73,10 +74,11 @@ void printVehicle(const Vehicle* vehicle);
 void printPremium(const Vehicle* premium);
 void printStandard(const Vehicle* standard);
 void printCompact(const Vehicle* compact);
+void printVehicleV(void* vehicle);
 
 void getLicensePlate(Vehicle* vehicle);
 int getNumSeats();
-int getvehicleYear(int minYear);
+int getvehicleYear();
 int getVehicleSN(Vehicle** vehicleArr, int vehicleCount);
 int getVehicleBrand(char** arrName, int numOfOpt);
 eFeatures getPremiumFeature();
@@ -84,6 +86,7 @@ eFeatures getPremiumFeature();
 void updateOdometer(Vehicle* vehicle, int totalDays, int kmPerDay);
 int rentVehicle(Vehicle* vehicle); //check again if needed.
 int checkUniqueSN(int SN, Vehicle** vehicleArr, int vehicleCount);
+int checkUniquePlate(char* plate, Vehicle** vehicleArr, int vehicleCount);
 
 int compareByOdometer(const void* v1, const void* v2);
 int compareBySN(const void* v1, const void* v2);

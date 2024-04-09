@@ -1,5 +1,5 @@
 #pragma once
-#define START_SN_INVOICE 1000
+#define START_SN_INVOICE 0
 #include "Date.h"
 
 typedef struct {
@@ -9,8 +9,9 @@ typedef struct {
     Date issueDate;
 }Invoice;
 
-int generateInvoiceSN();
 Invoice* createInvoice(float amount, int rentalSerial);
+int updateInvoiceGenerator(int num);
+int getCurrentInvoiceGenerator();
 void printInvoice(const Invoice* invoice);
 void updateInvoice(Invoice* invoice, float updateCost);
 

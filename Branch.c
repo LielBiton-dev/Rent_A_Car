@@ -2,13 +2,26 @@
 #include <stdlib.h>
 
 #include "Branch.h"
+static int branchID_generator = START_ID_BRANCH;
 
 int initBranch(Branch* branch) {
 
-	/*if (!initAddress(&branch->address, "\nEnter branch address (format: \"country, city, street and number\" : "))
-		return 0;*/
-	branch->branchID++;
+	if (!branch)
+		return 0;
+	initAddress(&branch->address);
+	branch->branchID = branchID_generator++;
 	return 1;
+}
+
+int getCurrentBranchGenerator()
+{
+	return branchID_generator;
+}
+
+int updateBranchGenerator(int num)
+{
+	branchID_generator = num;
+	return ++branchID_generator;
 }
 
 int compareByID(const void* b1, const void* b2) {
@@ -16,4 +29,17 @@ int compareByID(const void* b1, const void* b2) {
 	Branch* br2 = (Branch*)b2;
 
 	return br1->branchID - br2->branchID;
+}
+
+void printBranch(const void* b) {
+	Branch* branch = (Branch*)b;
+	if (!branch)
+		return;
+	printf("Branch ID: %d\nBranch Address: ", branch->branchID);
+	printAddress(&branch->address);
+}
+
+void freeBranch(Branch* branch)
+{
+	freeAddress(&branch->address);
 }

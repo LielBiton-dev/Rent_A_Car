@@ -4,13 +4,16 @@
 #include <ctype.h>
 
 #include "Rental.h"
+static int rentalSN_generator = START_SN_RENT;
 
 int initRental(Rental* rental, Customer* customer, Vehicle* vehicle, int branchID)
 {
-	rental->rentalSN = generateRentalSN();
+	rental->rentalSN = rentalSN_generator++;
+	printf("Enter Start Date: ");
 	getCorrectDate(&rental->startDate);
 	int ok = 0;
 	do {
+		printf("Enter End Date: ");
 		getCorrectDate(&rental->endDate);
 		ok = checkRentDates(rental->startDate, rental->endDate);
 	} while (!ok);
@@ -19,7 +22,7 @@ int initRental(Rental* rental, Customer* customer, Vehicle* vehicle, int branchI
 	rental->vehicle = vehicle;
 	rental->branchID = branchID;
 	rental->insurance = *(createInsurance());
-	rental->totalCost = calculateTotalCost(rental);
+	rental->totalCost = 0;
 	rental->invoice = *(createInvoice(rental->totalCost, rental->rentalSN));
 	return 1;
 }
@@ -42,17 +45,22 @@ int compareRentalByVehicleSN(const void* v1, const void* v2)
 	return e1->vehicle->vehicleSN - e1->vehicle->vehicleSN;
 }
 
-int generateRentalSN()
+int updateRentalGenerator(int num)
 {
-	static int currentSerialNumber = START_SN_RENT; // Initial serial number
-	return currentSerialNumber++;
+	rentalSN_generator = num;
+	return ++rentalSN_generator;
+}
+
+int getCurrentRentalGenerator()
+{
+	return rentalSN_generator;
 }
 
 float calculateTotalCost(Rental* rental)
 {
-	float num = 0;
+	float num = 0.0;
 	int days = calculateDaysOfRental(rental->startDate, rental->endDate);
-	num += (days * (rental->insurance.costPerDay + rental->vehicle->costPerDay));
+	num = num + (days * (rental->insurance.costPerDay + rental->vehicle->costPerDay));
 	return num;
 }
 
@@ -66,21 +74,20 @@ int endRental(Rental* rental)
 
 void printRental(const Rental* rental)
 {
-	printf("Rental serial number: %d\n", rental->rentalSN);
+	printf("\033[1;32mRental serial number: %d\033[0m\n", rental->rentalSN);
 	printCustomer(&rental->customer);
-	printf("Rent vehicle: ");
-	rental->vehicle->print;
-	printf("From ");
+	printf("Rent From ");
 	printDate(&rental->startDate);
-	printf("to ");
+	printf("Until ");
 	printDate(&rental->endDate);
+	printf("\nPick up vehicle number %d from branch number %d\n", rental->vehicle->vehicleSN, rental->branchID);
+	//rental->vehicle->print(rental->vehicle);
 	printInsurance(&rental->insurance);
 	printInvoice(&rental->invoice);
 }
 
 void freeRental(Rental* rental)
 {
-	//freeVehicle
 	free(rental->vehicle);
 	freeCustomer(&rental->customer);
 }

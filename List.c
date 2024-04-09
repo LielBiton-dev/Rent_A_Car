@@ -126,7 +126,6 @@ int L_print(const LIST* pList, void (*print)(const void*))
 	if (!pList)
 		return False;
 
-	printf("\n");
 	tmp = pList->head.next;
 	while (tmp != NULL)
 	{

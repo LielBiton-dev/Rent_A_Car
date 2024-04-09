@@ -1,42 +1,64 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "RentalCompany.h"
+#include "CompanyBinFiles.h"
+#include "CompanyTextFiles.h"
 
 typedef enum
 {
-	eFromTxt, eFromBin, ePrintCompany, ePrintBranches, ePrintVehicles,
+	ePrintCompany, ePrintBranches, ePrintVehicles,
 	ePrintCustomers, ePrintRentals, eAddVehicle,eAddCustomer,eAddRental,eAddBranch,eSortVehicles, 
-	eFindVehicle, ePrintRentalsInBranch,eUpdateRental, eNofOptionsMenu
+	eFindVehicle, ePrintRentalsInBranch,eUpdateRental, eLottery, eNofOptionsMenu
 } eMenuOptions;
 
-const char* str[eNofOptionsMenu] = { "Upload Data From Text File", "Upload Data From Binary File", "Print Rental Company", "Print All Branches", "Print All Vehicles",
+const char* str[eNofOptionsMenu] = { "Print Rental Company", "Print All Branches", "Print All Vehicles",
 	"Print All Customers", "Print All Rentals", "Add New Vehicle To Company","Add New Customer","Add New Rental","Add New Branch","Sort Vehicles Array",
-	"Find Vehicle", "Print All Rentals In specific Branch","Update Existing Rental" };
+	"Find Vehicle", "Print All Rentals In specific Branch","Update Existing Rental", "Give Discount To A Random Rental"};
 
 #define EXIT -1
 int menu();
+int loadDataMenu();
 
 int main()
 {
+
 	RentalCompany company;
-	initCompany(&company);
-	int option;
+	int option, ok = 0;
 	int stop = 0;
 
+	do {
+		stop = 1;
+		option = loadDataMenu();
+		switch (option) {
+		case 1:
+			ok = initCompanyFromTFile(&company, "rental_company.txt");
+			break;
+		case 2:
+			ok = initCompanyFromBFile(&company, "rental_company.bin");
+			break;
+		case 3:
+			ok = initCompany(&company);
+			break;
+		default:
+			printf("Invalid option\n");
+			stop = 0;
+			break;
+		}
+	} while (!stop);
 
+	//if (!ok) //If failed to initialize from files 
+	//{
+	//	printf("Error in initialize from file. Please restart manually\n");
+	//	initCompany(&company);
+	//}
+	//printf("%d\n", branchID_generator);
 	do
 	{
+		stop = 0;
 		option = menu();
 		switch (option)
 		{
-		case eFromTxt:
-			//initCompanyFromTxtFile
-			break;
-
-		case eFromBin:
-			//initCompanyFromBinFile
-			break;
-
 		case ePrintCompany:
 			printCompany(&company);
 			break;
@@ -62,14 +84,15 @@ int main()
 			break;
 
 		case eAddCustomer:
-			//addCustomer(&company);
+			addCustomer(&company);
 			break;
 
 		case eAddRental:
-			//addRental(&company);
+			addRental(&company);
 			break;
 
 		case eAddBranch:
+			//printf("%d\n", branchID_generator);
 			addBranch(&company);
 			break;
 
@@ -82,11 +105,15 @@ int main()
 			break;
 
 		case ePrintRentalsInBranch:
-			//print rental in branch function.
+			printRentalsByBranch(&company);
 			break;
 
 		case eUpdateRental:
 			updateRental(&company);
+			break;
+
+		case eLottery:
+			RentalLotteryDiscount(&company);
 			break;
 
 		case EXIT:
@@ -95,14 +122,14 @@ int main()
 			break;
 
 		default:
-			printf("Wrong option\n");
+			printf("Invalid option\n");
 			break;
 		}
 	} while (!stop);
 
-	//saveCompanyToTxtFile(&company, "rental_company.txt");
-	//saveCompanyToBinFile(&company, "rental_company.bin");
-	//freeCompany(&company);
+	saveCompanyToBFile(&company, "rental_company.bin");
+	saveCompanyToTFile(&company, "rental_company.txt");
+	freeCompany(&company);
 
 	return 1;
 }
@@ -115,6 +142,20 @@ int menu()
 	for (int i = 0; i < eNofOptionsMenu; i++)
 		printf("%d - %s\n", i, str[i]);
 	printf("%d - Quit\n", EXIT);
+	scanf("%d", &option);
+	//clean buffer
+	char tav;
+	scanf("%c", &tav);
+	return option;
+}
+
+int loadDataMenu()
+{
+	int option;
+	printf("Choose option for company Initial Setup:\n");
+	printf("1 - Load data from text file\n");
+	printf("2 - Load data from binary file\n");
+	printf("3 - Insert data manually\n");
 	scanf("%d", &option);
 	//clean buffer
 	char tav;

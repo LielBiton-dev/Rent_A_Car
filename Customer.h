@@ -5,18 +5,19 @@
 #define MIN_AGE 21
 
 typedef struct {
-    char ID[ID_LEN];
+    char ID[ID_LEN + 1];
     char* firstName;
     char* lastName;
-    char phone[PHONE_LEN];
+    char phone[PHONE_LEN + 1];
     int age;
 }Customer;
 
-int initCustomer(Customer* customer);
+int initCustomer(Customer* customer, Customer* customerArr, int numCustomers);
 int getCustomerID(Customer* customer);
 int getPhoneNumber(Customer* customer);
 int getCustomerFullName(Customer* customer);
+int checkUniqueID(const char* id, const Customer* customerArr, int numCustomers);
 int getAge();
-int checkID(const char* ID);
+int checkIfAllDigits(const char* Number, int len);
 void printCustomer(const Customer* customer);
 void freeCustomer(Customer* customer);

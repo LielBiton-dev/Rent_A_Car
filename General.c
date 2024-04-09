@@ -8,7 +8,7 @@ char* getStrExactName(const char* msg)
 {
 	char* str;
 	char temp[MAX_STR_LEN];
-	printf("%s\t", msg);
+	printf("%s\n", msg);
 	myGets(temp, MAX_STR_LEN, stdin);
 
 	str = getDynStr(temp);
@@ -47,11 +47,19 @@ char* myGets(char* buffer, int size, FILE* source)
 	return NULL;
 }
 
+void generalArrayFunction(void* arr, int size, size_t typeSize, void(*f)(void*))
+{
+	for (int i = 0; i < size; i++)
+	{
+		f((char*)arr + i * typeSize);
+	}
+}
+
 double getDoubleNum(const char* msg)
 {
 	double num;
 	do {
-		printf("%s\t", msg);
+		printf("%s\n", msg);
 		scanf("%lf", &num);
 	} while (num <= 0);
 	printf("\n");
@@ -62,7 +70,7 @@ int getIntegerNum(const char* msg)
 {
 	int num;
 	do {
-		printf("%s\t", msg);
+		printf("%s\n", msg);
 		scanf("%d", &num);
 	} while (num <= 0);
 	printf("\n");
@@ -73,7 +81,7 @@ int getYesNoAnswer(const char* msg)
 {
 	int num;
 	do {
-		printf("%s\t", msg);
+		printf("%s\n", msg);
 		scanf("%d", &num);
 	} while (num != 0 && num != 1);
 	printf("\n");

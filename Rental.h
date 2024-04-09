@@ -18,15 +18,16 @@ typedef struct {
     float totalCost;
     Insurance insurance;
     Invoice invoice;
-    int branchID; //print all branches and choose a proper ID.
+    int branchID;
    
 }Rental;
 
 int initRental(Rental* rental, Customer* customer, Vehicle* vehicle, int branchID);
 int checkRentDates(Date start, Date end);
-int generateRentalSN();
 int compareRentalByVehicleSN(const void* v1, const void* v2); // Not sure it is needed.
 float calculateTotalCost(Rental* rental);
+int updateRentalGenerator(int num);
+int getCurrentRentalGenerator();
 int calculateDaysOfRental(Date start, Date end);
 int endRental(Rental* rental);
 void printRental(const Rental* rental);
