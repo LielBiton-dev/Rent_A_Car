@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Customer.h"
 #include "Insurance.h"
 #include "Vehicle.h"
@@ -7,6 +6,7 @@
 #include "Branch.h"
 
 #define START_SN_RENT 0
+#define MAX_SN_RENT 9999
 #define AVG_KM 100
 
 typedef struct {
@@ -22,13 +22,15 @@ typedef struct {
    
 }Rental;
 
-int initRental(Rental* rental, Customer* customer, Vehicle* vehicle, int branchID);
+int initRental(Rental* rental, Customer* customer, const Vehicle** vehicleArr, Rental* rentalArr, int numRentals, int numVehicles, int branchID);
 int checkRentDates(Date start, Date end);
-int compareRentalByVehicleSN(const void* v1, const void* v2); // Not sure it is needed.
 float calculateTotalCost(Rental* rental);
 int updateRentalGenerator(int num);
 int getCurrentRentalGenerator();
-int calculateDaysOfRental(Date start, Date end);
+int isVehicleAvailableInDates(const Rental* rentalArr, int numRentals, const Vehicle* vehicle, const Date* start, const Date* end); // Returns 1 if the vehicle that was sent is available in the dates that were sent (by customer request).
+void printAvailableVehicles(const Vehicle** vehicleArr, const Rental* rentalArr, int numRentals, int numVehicles, const Rental* rental);
+Vehicle* findVehicleBySN(Vehicle** vehicleArr, int numVehicles, int SN);
+Vehicle* getVehicleInRental(const Vehicle** vehicleArr, Rental* rentalArr, int numRentals, int numVehicles, int rentalIndex);
 int endRental(Rental* rental);
 void printRental(const Rental* rental);
 void freeRental(Rental* rental);

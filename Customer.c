@@ -9,7 +9,7 @@
 
 int initCustomer(Customer* customer, Customer* customerArr, int numCustomers)
 {
-    if (!getCustomerID(customer)) return 0;
+    if (!getCustomerID(customer, customerArr, numCustomers)) return 0;
     if (!getCustomerFullName(customer)) return 0;
     if (!getPhoneNumber(customer)) return 0;
     customer->age = getAge();
@@ -35,7 +35,7 @@ int checkUniqueID(const char* id, const Customer* customerArr, int numCustomers)
     return 1;
 }
 
-int getCustomerID(Customer* customer)
+int getCustomerID(Customer* customer, Customer* customerArr, int numCustomers)
 {
     char id[MAX_STR_LEN];
     int ok = 1;
@@ -53,9 +53,11 @@ int getCustomerID(Customer* customer)
             printf("ID should contain numbers only. Try again.\n");
             ok = 0;
         }
-        //ok = checkUniqueID(id, customerArr, numCustomers);
-        //if (!ok)
-        //    printf("This customer already exists.\n");
+        else if (customerArr != NULL) {                                    // ! : added checkUniqueID condition only for new Customer use case. reloop if ID detected
+            ok = checkUniqueID(id, customerArr, numCustomers);
+            if (!ok)                                                       // !!: when passing function in RentalCompany.c : chooseCustomerByID --- it is passed with NULL so this and above conditions are ignored 
+                printf("This customer already exists.\n");
+        }
     } while (!ok);
     strcpy(customer->ID, id);
     return 1;
@@ -69,17 +71,18 @@ int getPhoneNumber(Customer* customer)
         ok = 1;
         printf("\nEnter Phone 05******** - %d numbers\n", PHONE_LEN);
         myGets(phone, MAX_STR_LEN, stdin);
-
-        if (strlen(phone) != PHONE_LEN)
-        {
+        if (strlen(phone) != PHONE_LEN) {
             printf("Phone number should be %d numbers\n", PHONE_LEN);
             ok = 0;
         }
-
         // Check if the phone number contains only digits
         else if (!checkIfAllDigits(phone, PHONE_LEN)) {
             printf("Phone number should contain digits only\n");
             ok = 0;
+        }
+        else if (strncmp(phone, "05", 2) != 0) {
+                printf("Phone number should start with '05'\n");
+                ok = 0;
         }
     } while (!ok);
 
@@ -91,8 +94,10 @@ int getCustomerFullName(Customer* customer)
 {
     customer->firstName = getStrExactName("\nEnter first name");
     if (!customer->firstName) return 0;
+    customer->firstName[0] = toupper(customer->firstName[0]);
     customer->lastName = getStrExactName("\nEnter last name");
     if (!customer->lastName) return 0;
+    customer->lastName[0] = toupper(customer->lastName[0]);
     return 1;
 }
 
@@ -100,7 +105,7 @@ int getAge()
 {
     int age;
     do {
-        printf("Enter age\n");
+        printf("Enter age - minimum %d\n", MIN_AGE);
         scanf("%d", &age);
         if (age < MIN_AGE)
             printf("Not above minimum age for rental.\n");

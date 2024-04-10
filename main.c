@@ -9,12 +9,12 @@ typedef enum
 {
 	ePrintCompany, ePrintBranches, ePrintVehicles,
 	ePrintCustomers, ePrintRentals, eAddVehicle,eAddCustomer,eAddRental,eAddBranch,eSortVehicles, 
-	eFindVehicle, ePrintRentalsInBranch,eUpdateRental, eLottery, eNofOptionsMenu
+	eFindVehicle, ePrintRentalsInBranch,eUpdateRental, eLottery,eCalculateRevenue,eNofOptionsMenu
 } eMenuOptions;
 
 const char* str[eNofOptionsMenu] = { "Print Rental Company", "Print All Branches", "Print All Vehicles",
 	"Print All Customers", "Print All Rentals", "Add New Vehicle To Company","Add New Customer","Add New Rental","Add New Branch","Sort Vehicles Array",
-	"Find Vehicle", "Print All Rentals In specific Branch","Update Existing Rental", "Give Discount To A Random Rental"};
+	"Find Vehicle", "Print All Rentals In specific Branch","Update Existing Rental", "Give Discount To A Random Rental", "See Company Revenue In Specific Year"};
 
 #define EXIT -1
 int menu();
@@ -22,7 +22,6 @@ int loadDataMenu();
 
 int main()
 {
-
 	RentalCompany company;
 	int option, ok = 0;
 	int stop = 0;
@@ -47,12 +46,12 @@ int main()
 		}
 	} while (!stop);
 
-	//if (!ok) //If failed to initialize from files 
-	//{
-	//	printf("Error in initialize from file. Please restart manually\n");
-	//	initCompany(&company);
-	//}
-	//printf("%d\n", branchID_generator);
+	if (!ok) //If failed to initialize from files 
+	{
+		printf("Error in initialize. Please restart manually\n");
+		initCompany(&company);
+	}
+
 	do
 	{
 		stop = 0;
@@ -92,7 +91,6 @@ int main()
 			break;
 
 		case eAddBranch:
-			//printf("%d\n", branchID_generator);
 			addBranch(&company);
 			break;
 
@@ -116,6 +114,10 @@ int main()
 			RentalLotteryDiscount(&company);
 			break;
 
+		case eCalculateRevenue:
+			CalculateRevenueForSpecificYear(&company);
+			break;
+
 		case EXIT:
 			printf("Bye bye\n");
 			stop = 1;
@@ -130,7 +132,6 @@ int main()
 	saveCompanyToBFile(&company, "rental_company.bin");
 	saveCompanyToTFile(&company, "rental_company.txt");
 	freeCompany(&company);
-
 	return 1;
 }
 

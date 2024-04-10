@@ -14,12 +14,12 @@ int getCorrectDate(Date* pDate) //extract Date from inputted string
     int ok = 1;
 
     do {
-        printf("dd%c%cmm%c%cyyyy\t",
-            DATE_TAV, DATE_TAV, DATE_TAV, DATE_TAV);
+        printf("dd%c%cmm%c%cyyyy (current year - %d)\t",
+            DATE_TAV, DATE_TAV, DATE_TAV, DATE_TAV, MIN_YEAR);
         myGets(date, MAX_STR_LEN, stdin);
         ok = checkDate(date, pDate);
         if (!ok)
-            printf("Error, try again\n");
+            printf("Try enter correct date.\n");
     } while (!ok);
     return 1;
 }
@@ -45,7 +45,7 @@ int	 checkDate(char* date, Date* pDate)
     return 1;
 }
 
-int calculateDaysOfRental(const Date start,const Date end)
+int calculateDaysOfRental(const Date start, const Date end)
 {
     int totalDays = 0;
     if (end.month < start.month)
@@ -64,7 +64,10 @@ int calculateDaysOfRental(const Date start,const Date end)
         totalDays += (DAYS_IN_YEAR * (end.year - start.year));
     }
     totalDays = totalDays - start.day + end.day;
-    return totalDays;
+    if (totalDays == 0) //if its the same day
+        return 1;
+    else
+        return totalDays;
 }
 
 int dateRangesDoNotCollide(const Date* start1, const Date* end1, const Date* start2, const Date* end2) // Return 0 if there is a collision.
@@ -82,5 +85,5 @@ int dateRangesDoNotCollide(const Date* start1, const Date* end1, const Date* sta
 }
 
 void printDate(const Date* date) {
-    printf("Date: %d/%d/%d ", date->day, date->month, date->year);
+    printf(" %d/%d/%d ", date->day, date->month, date->year);
 }

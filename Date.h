@@ -2,7 +2,7 @@
 
 #define MAX_MONTHS 12
 #define MIN_MONTHS 1
-#define MIN_YEAR 1999
+#define MIN_YEAR 2024 //current year
 #define MAX_DATE_LEN 12
 #define DAYS_IN_YEAR 365
 

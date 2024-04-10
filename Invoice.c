@@ -38,7 +38,7 @@ void updateInvoice(Invoice* invoice, float updateCost)
 
 void printInvoice(const Invoice* invoice)
 {
-	printf("Invoice Number %d For Rental Number %d\nTotal Amount: %.3f\tIssue Date: ", 
+	printf("Invoice Number %d For Rental Number %d\nTotal Amount: %.2f\tIssue Date: ", 
 		invoice->invoiceSN, invoice->rentalSN, invoice->totalAmount);
 	printDate(&invoice->issueDate);
 	printf("\n");

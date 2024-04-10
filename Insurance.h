@@ -6,7 +6,7 @@ static const char* types[eNumTypes] = { "Liability", "Collision Damage Waiver", 
 static const int costs[eNumTypes] = { 12,20,18,22,30 };
 
 typedef struct {
-    unsigned int InsuranceSN; // -> From 0 - 9999 -> 14 bits
+    unsigned int InsuranceSN; // -> From 0 - 9999 (max rentals limit) -> 14 bits
     eType type; // 5 option for type -> 3 bits
     unsigned int costPerDay; // Max cost per day is 30 -> 5 bits
     // Total 3 bytes for compressed file

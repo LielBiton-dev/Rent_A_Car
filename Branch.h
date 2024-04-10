@@ -1,8 +1,6 @@
 #pragma once
 #include <stdio.h>
 #include "Address.h"
-
-#define MAX_VEHICLES 25
 #define START_ID_BRANCH 0
 
 typedef struct{

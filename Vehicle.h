@@ -78,7 +78,7 @@ void printVehicleV(void* vehicle);
 
 void getLicensePlate(Vehicle* vehicle);
 int getNumSeats();
-int getvehicleYear();
+int getVehicleYear();
 int getVehicleSN(Vehicle** vehicleArr, int vehicleCount);
 int getVehicleBrand(char** arrName, int numOfOpt);
 eFeatures getPremiumFeature();
@@ -92,5 +92,6 @@ int compareByOdometer(const void* v1, const void* v2);
 int compareBySN(const void* v1, const void* v2);
 int compareByYear(const void* v1, const void* v2);
 int compareByLicensePlate(const void* v1, const void* v2);
+void freeVehiclePtr(void* pVehiclePtr);
 
 //nothing to free

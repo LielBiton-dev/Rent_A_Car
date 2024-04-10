@@ -25,7 +25,6 @@ int addBranch(RentalCompany* company) {
 	if (!company) return 0;
 	Branch* pBranch = (Branch*)calloc(1, sizeof(Branch));
 	if (!pBranch) return 0;
-	//printf("%d", branchID_generator);
 	if (!initBranch(pBranch)) {
 		freeBranch(pBranch);
 		free(pBranch);
@@ -85,7 +84,7 @@ Branch* findBranchByID(const RentalCompany* company, int branchID)  //returns NU
 	return NULL;
 }
 
-Customer* chooseCustomerByID(RentalCompany* company)
+Customer* chooseCustomerByID(const RentalCompany* company)
 {
 	Customer* temp;
 	Customer toSearch;
@@ -97,7 +96,7 @@ Customer* chooseCustomerByID(RentalCompany* company)
 	printAllCustomers(company);
 	do {
 		printf("\nChoose a customer from list by typing its ID\n");
-		getCustomerID(&toSearch);
+		getCustomerID(&toSearch, NULL, 0); // !! : get ID but ignore checkUniqueID check. 
 		temp = findCustomerByID(company->customerArr, company->numCustomers, toSearch.ID);
 		if (!temp)
 			printf("No customer with this ID. Try again!\n");
@@ -105,26 +104,7 @@ Customer* chooseCustomerByID(RentalCompany* company)
 	return temp;
 }
 
-Vehicle* chooseVehicleBySN(RentalCompany* company)
-{
-	Vehicle* temp;
-	int SN;
-	if (!company->numVehicles)
-	{
-		printf("No vehicles to choose from. try adding vehicle first.");
-		return NULL;
-	}
-	printAllVehicles(company);
-	do {
-		SN = getIntegerNum("\nChoose a vehicle from list by typing its Serial Number");
-		temp = findVehicleBySN(company->vehicleArr, company->numVehicles, SN);
-		if (!temp)
-			printf("No vehicle with this Serial Number. Try again!\n");
-	} while (temp == NULL);
-	return temp;
-}
-
-Customer* addRentalMenu(RentalCompany* company)
+Customer* SelectNewOrExistingCustomer(RentalCompany* company)
 {
 	int option;
 	Customer* customer = NULL;
@@ -154,8 +134,7 @@ Customer* addRentalMenu(RentalCompany* company)
 int addRental(RentalCompany* company) 
 {
 	Customer* customer;
-	Vehicle* vehicle;
-	customer = addRentalMenu(company); //choose if new or existing customer in new rental 
+	customer = SelectNewOrExistingCustomer(company); //choose if new or existing customer in new rental 
 	if (!customer) return 0;
 
 	//choose branch to pick up the vehicle
@@ -166,9 +145,9 @@ int addRental(RentalCompany* company)
 	company->rentalArr = (Rental*)realloc(company->rentalArr, (company->numRentals + 1) * sizeof(Rental));
 	if (!company->rentalArr)
 		return 0;
-	vehicle = chooseVehicleBySN(company);
-	if (!vehicle) return 0;
-	if (!initRental(&company->rentalArr[company->numRentals], customer, vehicle, branchID)) return 0;
+	if (!initRental(&company->rentalArr[company->numRentals], customer, company->vehicleArr, company->rentalArr, company->numRentals, company->numVehicles, branchID))
+		return 0;
+	rentVehicle(company->rentalArr[company->numRentals].vehicle);
 	company->rentalArr[company->numRentals].totalCost = calculateTotalCost(&company->rentalArr[company->numRentals]);
 	updateInvoice(&company->rentalArr[company->numRentals].invoice, company->rentalArr[company->numRentals].totalCost);
 	company->numRentals++;
@@ -185,17 +164,16 @@ int addVehicle(RentalCompany* company) {
 		printf("Please choose vehicle category to add\n");
 		for (int i = 0; i < eNofCats; i++)
 			printf("[%d] for %s\n", i + 1, Categories[i]);
-		scanf("%d", &choice);
-	} while (choice<=0 || choice>eNofCats);
-
+	} while (!scanf("%d", &choice) || choice<=0 || choice>eNofCats);
+	choice--;
 	switch (choice) {
-	case 1:
+	case ePremium:
 		initPremium(company->vehicleArr, pVehicle, company->numVehicles);
 		break;
-	case 2:
+	case eStandard:
 		initStandard(company->vehicleArr, pVehicle, company->numVehicles);
 		break;
-	case 3:
+	case eCompact:
 		initCompact(company->vehicleArr, pVehicle, company->numVehicles);
 		break;
 	default:
@@ -223,16 +201,6 @@ int addCustomer(RentalCompany* company)
 	return 1;
 }
 
-Vehicle* findVehicleBySN(Vehicle** vehicleArr, int numVehicles, int SN)
-{
-	for (int i = 0; i < numVehicles; i++)
-	{
-		if (vehicleArr[i]->vehicleSN == SN)
-			return vehicleArr[i];
-	}
-	return NULL;
-}
-
 Customer* findCustomerByID(Customer* customerArr, int numCustomers, char* ID)
 {
 	for (int i = 0; i < numCustomers; i++)
@@ -241,36 +209,6 @@ Customer* findCustomerByID(Customer* customerArr, int numCustomers, char* ID)
 			return &customerArr[i];
 	}
 	return NULL;
-}
-
-int isVehicleAvailableInDates(const RentalCompany* company, Vehicle* vehicle, Date* start, Date* end) // Return 1 if vehicle is available
-{
-	for (int i = 0; i < company->numRentals; i++)
-	{
-		if (company->rentalArr[i].vehicle->vehicleSN == vehicle->vehicleSN)
-		{
-			if (!dateRangesDoNotCollide(&company->rentalArr[i].startDate, &company->rentalArr[i].endDate, start, end))
-				return 0; // the vehicle is unAvailable in the dates
-			else
-				return 1;
-		}
-	}
-	return 1;
-}
-
-void printAvailableVehicles(const RentalCompany* company, Rental* rental) // Print available vehicles considering the NEW rental chosen dates
-{
-	printf("\n--- Available Vehicles ---\n");
-	for (int i = 0; i < company->numVehicles; i++)
-	{
-		if (company->vehicleArr[i]->isTaken == 1)
-		{
-			if (isVehicleAvailableInDates(company, company->vehicleArr[i], &rental->startDate, &rental->endDate))
-				company->vehicleArr[i]->print(company->vehicleArr[i]);
-		}
-		else
-			company->vehicleArr[i]->print(company->vehicleArr[i]);
-	}
 }
 
 void RentalLotteryDiscount(RentalCompany* company)
@@ -284,10 +222,11 @@ void RentalLotteryDiscount(RentalCompany* company)
 	}
 	randomIndex = rand() % (company->numRentals);
 	printf("The rental below got a %d%% discount!\n", DISCOUNT);
+	printf("Total amount before discount: %.2f\n", company->rentalArr[randomIndex].totalCost);
 	company->rentalArr[randomIndex].totalCost *= (float)0.8;
-	updateInvoice(&company->rentalArr[randomIndex].invoice, company->rentalArr[randomIndex].totalCost); // Update the invoice as well.
+	updateInvoice(&company->rentalArr[randomIndex].invoice, company->rentalArr[randomIndex].totalCost); // Update rental invoice.
 	printRental(&company->rentalArr[randomIndex]);
-	printf("Sending message to customer...");
+	printf("Sending message to customer ...");
 	fflush(stdout); //Flush output buffer
 
 	//Print dots with a delay to "simulate" loading
@@ -296,8 +235,7 @@ void RentalLotteryDiscount(RentalCompany* company)
 		fflush(stdout); 
 		Sleep(500);      // Sleep for 0.5 second
 	}
-	printf("Message sent!\n"); // Print completion message
-
+	printf(" Message sent!\n"); // Print completion message
 }
 
 int chooseIndexFromRentalArray(RentalCompany* company)
@@ -329,24 +267,6 @@ updateType getUpdateType()
 	return (updateType)option;
 }
 
-Vehicle* updateVehicleInRental(RentalCompany* company, int rentalIndex)
-{
-	Vehicle* newVehicle;
-	if (!company->numVehicles)
-	{
-		printf("No vehicles to choose from. try adding a vehicle first.");
-		return NULL;
-	}
-	printAvailableVehicles(company, &company->rentalArr[rentalIndex]);
-	int ok = getIntegerNum("Choose the serial number of the vehicle: ");
-	newVehicle = findVehicleBySN(company->vehicleArr, company->numVehicles, ok);
-	if (!newVehicle)
-		printf("Wrong serial number.\n");
-	else
-		company->rentalArr[rentalIndex].vehicle = newVehicle;
-	return newVehicle;
-}
-
 int updateRentalHelper(RentalCompany* company)
 {
 	if (!company->numRentals) {
@@ -355,7 +275,7 @@ int updateRentalHelper(RentalCompany* company)
 	}
 	for (int i = 0; i < company->numRentals; i++)
 	{
-		printf("\n- - - - %d - - - -\n", i + 1);
+		printf("\n- - - - Line %d - - - -\n", i + 1);
 		printRental(&company->rentalArr[i]);
 	}
 	return 1;
@@ -379,10 +299,12 @@ void updateRental(RentalCompany* company)
 		do {
 			getCorrectDate(&company->rentalArr[index].endDate);
 			ok = checkRentDates(company->rentalArr[index].startDate, company->rentalArr[index].endDate);
+			if (!ok)
+				printf("End date is earlier than start date. Try again.\n");
 		} while (!ok);
 		break;
 	case eVehicle:
-		updateVehicleInRental(company, index);
+		company->rentalArr[index].vehicle = getVehicleInRental(company->vehicleArr, company->rentalArr, company->numRentals, company->numVehicles, index);
 		break;
 	case eEnd:
 		endRental(&company->rentalArr[index]);
@@ -396,12 +318,16 @@ void CalculateRevenueForSpecificYear(const RentalCompany* company)
 {
 	float totalRevenue = 0;
 	int year = getIntegerNum("Enter the year for which you would like to check revenue");
+	if (year > MAX_MAN_YEAR) {
+		printf("A revenue for a future year is not available.\n");
+		return;
+	}
 	for (int i = 0; i < company->numRentals; i++)
 	{
 		if (company->rentalArr[i].invoice.issueDate.year == year)
 			totalRevenue += (company->rentalArr[i].invoice.totalAmount);
 	}
-	printf("The revenue in %d is %f", year, totalRevenue);
+	printf("The revenue in %d is %.2f\n", year, totalRevenue);
 }
 
 sortType getSortType()
@@ -411,7 +337,7 @@ sortType getSortType()
 	do {
 		for (int i = 1; i < eOpt; i++)
 			printf("Enter %d for %s\n", i, sortName[i]);
-		scanf("%d", &option);
+		while(!scanf("%d", &option));
 		printf("\n");
 	} while (option <= 0 || option >= eOpt);
 	getchar();
@@ -428,10 +354,12 @@ void sortVehicles(RentalCompany* company)
 	}
 	company->sortBy = getSortType();
 	qsort(company->vehicleArr, company->numVehicles, sizeof(Vehicle*), compareFunctions[company->sortBy]);
+	printf("The Vehicles Array has been sorted successfully.\n");
 }
 
 void askUserSearchParameter(Vehicle* toSearch, const RentalCompany* company)
 {
+	printf("The Vehicles Array is sorted by %s parameter. ", sortName[company->sortBy]);
 	switch (company->sortBy)
 	{
 	case eOdometer:
@@ -441,7 +369,7 @@ void askUserSearchParameter(Vehicle* toSearch, const RentalCompany* company)
 		toSearch->vehicleSN = getIntegerNum("Enter serial number: ");
 		break;
 	case eYear:
-		toSearch->year = getvehicleYear(MIN_MAN_YEAR);
+		toSearch->year = getVehicleYear();
 		break;
 	case eLicensePlate:
 		getLicensePlate(toSearch);
@@ -458,11 +386,9 @@ void findVehicle(const RentalCompany* company)
 		printf("\nThe search cannot be performed, array not sorted\n");
 		return;
 	}
-
 	Vehicle* toSearch = (Vehicle*)malloc(sizeof(Vehicle));
 	if (!toSearch) return;
 	askUserSearchParameter(toSearch, company);
-
 	Vehicle** pRes = (Vehicle**)bsearch(&toSearch, company->vehicleArr, company->numVehicles, sizeof(Vehicle*), compareFunctions[company->sortBy]);
 	if (!pRes) printf("Vehicle was not found\n");
 	else {
@@ -507,7 +433,7 @@ void printRentalsByBranch(const RentalCompany* company)
 	int chosenBranchID = chooseBranch(company);
 	for (int i = 0; i < company->numRentals; i++)
 	{
-		if (company->rentalArr[i].branchID = chosenBranchID)
+		if (company->rentalArr[i].branchID == chosenBranchID)
 			printRental(&company->rentalArr[i]);
 	}
 }
@@ -524,10 +450,13 @@ void printAllBranches(const RentalCompany* company)
 
 void freeVehicleArray(Vehicle** arr, int numVehicles)
 {
-	for (int i = 0; i < numVehicles; i++)
-		free(arr[i]);
+	generalArrayFunction(arr, numVehicles, sizeof(Vehicle*), freeVehiclePtr);
 }
 
+void freeCustomerArray(Customer* arr, int numCustomers)
+{
+	generalArrayFunction(arr, numCustomers, sizeof(Customer), freeCustomer);
+}
 
 void freeCompany(RentalCompany* company)
 {
@@ -535,6 +464,7 @@ void freeCompany(RentalCompany* company)
 	L_free(&company->branch_list, freeBranch);
 	freeVehicleArray(company->vehicleArr, company->numVehicles);
 	free(company->vehicleArr);
+	freeCustomerArray(company->customerArr, company->numCustomers);
 	free(company->customerArr);
 	free(company->rentalArr);
 }
