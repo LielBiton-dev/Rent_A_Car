@@ -84,7 +84,7 @@ int getVehicleBrand(char** arrName, int numOfOpt);
 eFeatures getPremiumFeature();
 
 void updateOdometer(Vehicle* vehicle, int totalDays, int kmPerDay);
-int rentVehicle(Vehicle* vehicle); //check again if needed.
+int rentVehicle(Vehicle* vehicle);
 int checkUniqueSN(int SN, Vehicle** vehicleArr, int vehicleCount);
 int checkUniquePlate(char* plate, Vehicle** vehicleArr, int vehicleCount);
 

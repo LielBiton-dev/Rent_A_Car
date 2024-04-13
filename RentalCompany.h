@@ -7,7 +7,7 @@ typedef enum { eNoSort, eOdometer, eSerialNumber, eYear, eLicensePlate, eOpt } s
 static const char* sortName[eOpt] = { "Unsorted", "Odometer","Serial Number", "Manufacture Year","License Plate" };
 
 typedef enum {eStartDate, eEndDate, eVehicle,eEnd, eNum} updateType;
-static const char* updateName[eNum] = { "Start Date", "End Date","Vehicle","Finish Rental"};
+static const char* updateName[eNum] = { "Start Date", "End Date","Vehicle","Finish Rental Today"};
 
 typedef int (*CompareFunction)(const void*, const void*);
 static const CompareFunction compareFunctions[] = { NULL, compareByOdometer, compareBySN, compareByYear, compareByLicensePlate};
@@ -46,6 +46,7 @@ updateType getUpdateType();
 Customer* SelectNewOrExistingCustomer(RentalCompany* company);
 void RentalLotteryDiscount(RentalCompany* company); //The function randomly selects a rental that will receive a discount
 void CalculateRevenueForSpecificYear(const RentalCompany* company);
+int updateVehicleAvailability(RentalCompany* company);
 
 void printAllVehicles(const RentalCompany* company);
 void printCompany(const RentalCompany* company);

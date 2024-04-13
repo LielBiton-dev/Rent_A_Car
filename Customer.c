@@ -2,12 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <math.h>
 #include <time.h>
-
+#include "Macros.h"
 #include "Customer.h"
 #include "General.h"
 
-int initCustomer(Customer* customer, Customer* customerArr, int numCustomers)
+int initCustomer(Customer* customer, const Customer* customerArr, int numCustomers)
 {
     if (!getCustomerID(customer, customerArr, numCustomers)) return 0;
     if (!getCustomerFullName(customer)) return 0;
@@ -29,13 +30,13 @@ int checkUniqueID(const char* id, const Customer* customerArr, int numCustomers)
 {
     for (int i = 0; i < numCustomers; i++)
     {
-        if (strcmp(customerArr->ID, id) == 0)
+        if (strcmp(customerArr[i].ID, id) == 0)
             return 0;
     }
     return 1;
 }
 
-int getCustomerID(Customer* customer, Customer* customerArr, int numCustomers)
+int getCustomerID(Customer* customer, const Customer* customerArr, int numCustomers)
 {
     char id[MAX_STR_LEN];
     int ok = 1;
@@ -53,9 +54,9 @@ int getCustomerID(Customer* customer, Customer* customerArr, int numCustomers)
             printf("ID should contain numbers only. Try again.\n");
             ok = 0;
         }
-        else if (customerArr != NULL) {                                    // ! : added checkUniqueID condition only for new Customer use case. reloop if ID detected
+        else if (customerArr != NULL) {                                   
             ok = checkUniqueID(id, customerArr, numCustomers);
-            if (!ok)                                                       // !!: when passing function in RentalCompany.c : chooseCustomerByID --- it is passed with NULL so this and above conditions are ignored 
+            if (!ok)                                                       
                 printf("This customer already exists.\n");
         }
     } while (!ok);
@@ -93,24 +94,25 @@ int getPhoneNumber(Customer* customer)
 int getCustomerFullName(Customer* customer)
 {
     customer->firstName = getStrExactName("\nEnter first name");
-    if (!customer->firstName) return 0;
+    ERROR_ALOC_RETURN_NULL(customer->firstName)
     customer->firstName[0] = toupper(customer->firstName[0]);
     customer->lastName = getStrExactName("\nEnter last name");
-    if (!customer->lastName) return 0;
+    ERROR_ALOC_RETURN_NULL(customer->lastName)
     customer->lastName[0] = toupper(customer->lastName[0]);
     return 1;
 }
 
 int getAge()
 {
-    int age;
+    double age;
     do {
         printf("Enter age - minimum %d\n", MIN_AGE);
-        scanf("%d", &age);
+        while (!scanf("%lf", &age));
+
         if (age < MIN_AGE)
             printf("Not above minimum age for rental.\n");
     } while (age < MIN_AGE);
-    return age;
+    return (int)round(age);
 }
 
 void printCustomer(const Customer* customer)

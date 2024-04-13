@@ -23,7 +23,6 @@ typedef struct {
 }Rental;
 
 int initRental(Rental* rental, Customer* customer, const Vehicle** vehicleArr, Rental* rentalArr, int numRentals, int numVehicles, int branchID);
-int checkRentDates(Date start, Date end);
 float calculateTotalCost(Rental* rental);
 int updateRentalGenerator(int num);
 int getCurrentRentalGenerator();

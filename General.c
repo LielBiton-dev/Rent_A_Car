@@ -72,7 +72,7 @@ int getIntegerNum(const char* msg)
 	do {
 		printf("%s\n", msg);
 		while (!scanf("%d", &num));
-	} while (num <= 0);
+	} while (num < 0);
 	printf("\n");
 	return num;
 }

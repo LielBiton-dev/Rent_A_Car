@@ -10,7 +10,7 @@ typedef struct{
 }Branch;
 
 int initBranch(Branch* branch);
-int compareByID(const void* b1, const void* b2);
+//int compareByID(const void* b1, const void* b2);
 int updateBranchGenerator(int num);
 int getCurrentBranchGenerator();
 void printBranch(const void* branch);

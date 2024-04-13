@@ -512,7 +512,7 @@ int readBranchListFromTFile(FILE* fp, RentalCompany* pCompany, int* numBranches)
 		ERROR_ALOC_RETURN_NULL(newNode)
 		newNode->key = pBranch;
 		newNode->next = NULL;
-		L_insert(head, pBranch);
+		head = L_insert(head, pBranch);
 	}
 	return 1;
 }

@@ -26,9 +26,9 @@ int initRental(Rental* rental, Customer* customer, const Vehicle** vehicleArr, R
 	rental->customer = *customer;
 	rental->vehicle = getVehicleInRental(vehicleArr, rentalArr, numRentals, numVehicles, numRentals);
 	rental->branchID = branchID;
-	rental->insurance = *(createInsurance());
+	createInsurance(&rental->insurance);
 	rental->totalCost = 0;
-	rental->invoice = *(createInvoice(rental->totalCost, rental->rentalSN));
+	createInvoice(&rental->invoice, rental->totalCost, rental->rentalSN);
 	return 1;
 }
 
@@ -43,7 +43,7 @@ Vehicle* getVehicleInRental(const Vehicle** vehicleArr, Rental* rentalArr, int n
 	}
 	do {
 		printAvailableVehicles(vehicleArr, rentalArr, numRentals, numVehicles, &rentalArr[rentalIndex]);
-		ok = getIntegerNum("Choose the serial number of the vehicle: ");
+		ok = getIntegerNum("\nChoose the serial number of the vehicle: ");
 		newVehicle = findVehicleBySN(vehicleArr, numVehicles, ok);
 		if (!newVehicle)
 			printf("No vehicle with this Serial Number. Try again!\n");
@@ -59,17 +59,6 @@ Vehicle* findVehicleBySN(Vehicle** vehicleArr, int numVehicles, int SN)
 			return vehicleArr[i];
 	}
 	return NULL;
-}
-
-int checkRentDates(Date start, Date end)
-{
-	if (end.year < start.year)
-		return 0;
-	if (end.year == start.year && end.month < start.month)
-		return 0;
-	if (end.year == start.year && end.month == start.month && end.day < start.day)
-		return 0;
-	return 1;
 }
 
 int updateRentalGenerator(int num)
@@ -93,10 +82,19 @@ float calculateTotalCost(Rental* rental)
 
 int endRental(Rental* rental)
 {
+	int ok = 0;
+	if (isDatePassedOrToday(&rental->startDate) == 1)
+		getTodaysDate(&rental->endDate);
+	else
+	{
+		printf("End date is earlier than start date. Try again.\n");
+		return 0;
+	}
 	rental->vehicle->isTaken = 0;
 	updateOdometer(rental->vehicle, calculateDaysOfRental(rental->startDate, rental->endDate), AVG_KM);
-	printf("Rental was successfully completed");
+	printf("Rental was successfully completed\n");
 	printInvoice(&rental->invoice);
+	printf("You deserve a %.2f dollar credit", rental->totalCost - calculateTotalCost(rental));
 	return 1;
 }
 

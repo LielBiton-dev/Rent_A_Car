@@ -12,8 +12,8 @@ typedef struct {
     int age;
 }Customer;
 
-int initCustomer(Customer* customer, Customer* customerArr, int numCustomers);
-int getCustomerID(Customer* customer, Customer* customerArr, int numCustomers);
+int initCustomer(Customer* customer,const Customer* customerArr, int numCustomers);
+int getCustomerID(Customer* customer, const Customer* customerArr, int numCustomers);
 int getPhoneNumber(Customer* customer);
 int getCustomerFullName(Customer* customer);
 int checkUniqueID(const char* id, const Customer* customerArr, int numCustomers);

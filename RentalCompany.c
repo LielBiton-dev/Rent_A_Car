@@ -3,11 +3,12 @@
 #include <string.h>
 #include <time.h>
 #include <windows.h>
+#include "Macros.h"
 #include "RentalCompany.h"
 
 int initCompany(RentalCompany* company) {
 	company->companyName = getStrExactName("Enter company name\n");
-	if (!company->companyName) return 0;
+	ERROR_ALOC_RETURN_NULL(company->companyName)
 	if (!L_init(&company->branch_list))
 		return 0;
 	company->customerArr = NULL;
@@ -22,9 +23,9 @@ int initCompany(RentalCompany* company) {
 }
 int addBranch(RentalCompany* company) {
 
-	if (!company) return 0;
+	ERROR_ALOC_RETURN_NULL(company)
 	Branch* pBranch = (Branch*)calloc(1, sizeof(Branch));
-	if (!pBranch) return 0;
+	ERROR_ALOC_RETURN_NULL(pBranch)
 	if (!initBranch(pBranch)) {
 		freeBranch(pBranch);
 		free(pBranch);
@@ -96,7 +97,7 @@ Customer* chooseCustomerByID(const RentalCompany* company)
 	printAllCustomers(company);
 	do {
 		printf("\nChoose a customer from list by typing its ID\n");
-		getCustomerID(&toSearch, NULL, 0); // !! : get ID but ignore checkUniqueID check. 
+		getCustomerID(&toSearch, NULL, 0);
 		temp = findCustomerByID(company->customerArr, company->numCustomers, toSearch.ID);
 		if (!temp)
 			printf("No customer with this ID. Try again!\n");
@@ -135,7 +136,7 @@ int addRental(RentalCompany* company)
 {
 	Customer* customer;
 	customer = SelectNewOrExistingCustomer(company); //choose if new or existing customer in new rental 
-	if (!customer) return 0;
+	ERROR_ALOC_RETURN_NULL(customer)
 
 	//choose branch to pick up the vehicle
 	printf("\nSelect Pick-up location\n");
@@ -143,8 +144,7 @@ int addRental(RentalCompany* company)
 	if (branchID == -1) return 0; //no branches in comapny.
 
 	company->rentalArr = (Rental*)realloc(company->rentalArr, (company->numRentals + 1) * sizeof(Rental));
-	if (!company->rentalArr)
-		return 0;
+	ERROR_ALOC_RETURN_NULL(company->rentalArr)
 	if (!initRental(&company->rentalArr[company->numRentals], customer, company->vehicleArr, company->rentalArr, company->numRentals, company->numVehicles, branchID))
 		return 0;
 	rentVehicle(company->rentalArr[company->numRentals].vehicle);
@@ -158,7 +158,7 @@ int addVehicle(RentalCompany* company) {
 	int choice = 0;
 
 	Vehicle* pVehicle = (Vehicle*)malloc(sizeof(Vehicle));
-	if (!pVehicle) return 0;
+	ERROR_ALOC_RETURN_NULL(pVehicle)
 
 	do {
 		printf("Please choose vehicle category to add\n");
@@ -194,8 +194,7 @@ int addVehicle(RentalCompany* company) {
 int addCustomer(RentalCompany* company)
 {
 	company->customerArr = (Customer*)realloc(company->customerArr, (company->numCustomers + 1) * sizeof(Customer));
-	if (!company->customerArr)
-		return 0;
+	ERROR_ALOC_RETURN_NULL(company->customerArr)
 	initCustomer(&company->customerArr[company->numCustomers],company->customerArr,company->numCustomers);
 	company->numCustomers++;
 	return 1;
@@ -242,8 +241,9 @@ int chooseIndexFromRentalArray(RentalCompany* company)
 {
 	int index, ok = 1;
 	do {
+		ok = 1;
 		index = getIntegerNum("\nChoose the line number of the rental you want to update: "); // The index in rental array that user want to update.
-		if (index <= 0 || index > company->numRentals)
+		if (index < 0 || index >= company->numRentals)
 		{
 			printf("No such line. Try again\n");
 			ok = 0;
@@ -275,7 +275,7 @@ int updateRentalHelper(RentalCompany* company)
 	}
 	for (int i = 0; i < company->numRentals; i++)
 	{
-		printf("\n- - - - Line %d - - - -\n", i + 1);
+		printf("\n- - - - To Choose This Rental Enter %d - - - -\n", i);
 		printRental(&company->rentalArr[i]);
 	}
 	return 1;
@@ -285,7 +285,7 @@ void updateRental(RentalCompany* company)
 {
 	int index, ok;
 	if (!updateRentalHelper(company)) return;
-	index = chooseIndexFromRentalArray(company) - 1;
+	index = chooseIndexFromRentalArray(company);
 	updateType type = getUpdateType();
 	switch (type)
 	{
@@ -308,7 +308,7 @@ void updateRental(RentalCompany* company)
 		break;
 	case eEnd:
 		endRental(&company->rentalArr[index]);
-		break;
+		return;
 	}
 	company->rentalArr[index].totalCost = calculateTotalCost(&company->rentalArr[index]); // Calculate the total cost in case of changes.
 	updateInvoice(&company->rentalArr[index].invoice, company->rentalArr[index].totalCost); // Update the invoice as well.
@@ -333,7 +333,7 @@ void CalculateRevenueForSpecificYear(const RentalCompany* company)
 sortType getSortType()
 {
 	int option;
-	printf("Base on what field do you want to sort?\n");
+	printf("Based on what criteria do you want to sort?\n");
 	do {
 		for (int i = 1; i < eOpt; i++)
 			printf("Enter %d for %s\n", i, sortName[i]);

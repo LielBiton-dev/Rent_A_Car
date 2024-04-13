@@ -12,7 +12,7 @@ typedef struct {
     // Total 3 bytes for compressed file
 }Insurance;
 
-Insurance* createInsurance();
+int createInsurance(Insurance* insurance);
 eType getInsuranceType();
 unsigned int updateInsuranceGenerator(unsigned int num);
 unsigned int getCurrentInsuranceGenerator();

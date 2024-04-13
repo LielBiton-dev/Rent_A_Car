@@ -9,7 +9,7 @@ typedef struct {
     Date issueDate;
 }Invoice;
 
-Invoice* createInvoice(float amount, int rentalSerial);
+int createInvoice(Invoice* newInvoice, float amount, int rentalSerial);
 int updateInvoiceGenerator(int num);
 int getCurrentInvoiceGenerator();
 void printInvoice(const Invoice* invoice);

@@ -2,22 +2,19 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-
+#include "Macros.h"
 #include "Invoice.h"
 static int invoiceSN_generator = START_SN_INVOICE;
 
-Invoice* createInvoice(float amount, int rentalSerial)
+int createInvoice(Invoice* newInvoice, float amount, int rentalSerial)
 {
-	Invoice* newInvoice = (Invoice*)malloc(sizeof(Invoice));
-	if (!newInvoice) 
-		return NULL;
+	ERROR_ALOC_RETURN_NULL(newInvoice)
 	newInvoice->invoiceSN = invoiceSN_generator++;
 	newInvoice->totalAmount = amount;
 	newInvoice->rentalSN = rentalSerial;
 	printf("Enter issue date: ");
 	getCorrectDate(&newInvoice->issueDate);
-
-	return newInvoice;
+	return 1;
 }
 
 int updateInvoiceGenerator(int num)

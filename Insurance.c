@@ -2,19 +2,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-
+#include "Macros.h"
 #include "Insurance.h"
 static unsigned int InsuranceSN_generator = START_SN_INSUR;
 
-Insurance* createInsurance()
+int createInsurance(Insurance* insurance)
 {
-	Insurance* insurance = (Insurance*)malloc(sizeof(Insurance));
-	if (!insurance) return NULL;
+	ERROR_ALOC_RETURN_NULL(insurance)
 	insurance->type = getInsuranceType();
 	insurance->costPerDay = costs[insurance->type];
 	insurance->InsuranceSN = InsuranceSN_generator++;
 
-	return insurance;
+	return 1;
 }
 
 unsigned int updateInsuranceGenerator(unsigned int num)
@@ -34,7 +33,7 @@ eType getInsuranceType()
 	do {
 		printf("\nPlease enter type of insurance\n");
 		for (int i = 0; i < eNumTypes; i++)
-			printf("%d for %s\n", i, types[i]);
+			printf("%d for %s - costs %d$ per day\n", i, types[i], costs[i]);
 		scanf("%d", &option);
 	} while (option < 0 || option >= eNumTypes);
 	getchar();

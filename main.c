@@ -51,7 +51,6 @@ int main()
 		printf("Error in initialize. Please restart manually\n");
 		initCompany(&company);
 	}
-
 	do
 	{
 		stop = 0;
